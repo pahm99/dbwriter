@@ -1,0 +1,7 @@
+1,id,string,2
+2,nombre,string,0
+3,ap_paterno,string,0
+4,ap_materno,string,0
+5,fecha_alta,date,0
+6,credito,number,0
+7,deuda,number,0
