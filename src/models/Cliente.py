@@ -7,10 +7,6 @@ class Cliente(Data):
     nombre = 'clientes'
 
     campos = {
-        'id': {
-            'type': Type.string,
-            'rules': []
-        },
         'nombre': {
             'type': Type.string,
             'rules': []

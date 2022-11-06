@@ -1,4 +1,5 @@
 from os import path, mkdir
+import json
 
 
 class Data:
@@ -19,12 +20,23 @@ class Data:
         # checamos si existe un index, si no lo cremaos
         counter = 1
         if not path.exists(f'./db/{self.nombre}_table/index.db'):
-            findex = open(f'./db/{self.nombre}_table/index.db', 'a')
+
+            dic = {
+                'id': 0,
+                'tabla': self.nombre,
+                'columnas': []
+            }
+
             for campo_key in self.campos:
-                type = self.campos[campo_key]['type'].value;
-                findex.write(f'{counter},{campo_key},{type},0\n')
+                dic['columnas'].append({
+                    'tipo': self.campos[campo_key]['type'].value,
+                    'campo': campo_key,
+                    'posicion': counter
+                });
                 counter = counter + 1
                 pass
+            findex = open(f'./db/{self.nombre}_table/index.json', 'a')
+            findex.write(json.dumps(dic, indent=4))
             findex.close()
         # corroboramos los campos
         for campo_key in self.campos:
@@ -37,28 +49,21 @@ class Data:
 
     # aumenta en una, el id del documento
     def auto_increment(self):
-        index = open(f'./db/{self.nombre}_table/index.db', 'r')
-        lines = index.readlines()
-        index.close()
-        for i, line in enumerate(lines):
-            [
-                pos,
-                campo_index,
-                tipo,
-                last_key
-            ] = line.split(',')
+        json_file = open(f'./db/{self.nombre}_table/index.json', 'r')
+        dic = json.loads(json_file.read())
+        json_file.close()
+        json_file = open(f'./db/{self.nombre}_table/index.json', 'w')
 
-            if campo_index == self.primary_key:
-                index_out = open(f'./db/{self.nombre}_table/index.db','w')
-                lines[i] = ','.join([pos, campo_index, tipo, str(int(last_key) + 1)]) + '\n'
-                index_out.writelines(lines)
-                index_out.close()
-                print(lines)
-                pass
-        pass
+        dic['id'] = dic['id'] + 1
 
+        json_file.write(json.dumps(dic, indent=4))
+        json_file.close()
 
-        index.close()
+        return dic['id']
+
+    """
+    El campo que nos pasaron les llenamoslos valores, de lo contrario son NULL
+    """
 
     def insert(self, parametros: dict):
         # recorremos los campos y validamos que exista en el indice
@@ -67,35 +72,21 @@ class Data:
                 err = f'El campo {param_key} no definido en {self.nombre}';
                 raise Exception(err)
         pass
-        # si pasamos la validacion,entonces, empezamos hacer los registro
-        for param_key in parametros:
-            # recuperamos el indice del campo
-            campo = self.getCampo(param_key)
-            if campo is None:
-                raise Exception(f'campo {param_key} no existente en el indice {self.nombre}_table')
-            # buscamos su archivo del campo
-            field = open(f'./db/{self.nombre}_table/{param_key}.fd', 'a')
-            field.write('{0},{1}\n'.format(campo['id'], parametros[param_key]))
-            field.close()
-        # aumentamos el identificador
-        self.auto_increment()
+        # verfiicamos los campos que nos pasaron contra los que nos nos paramos
+        id = self.auto_increment()  # nos regresa un id autoincrementado
+        # recorremos nuestro campos contra los parametros
+        # si no los nustro campo no esta en los parametros, entonce es nulo, porque
+        # no se envie a ingresar
 
-    def getCampo(self, campo):
-        index = open(f'./db/{self.nombre}_table/index.db', 'r')
-        for line in index:
-            [
-                pos,
-                campo_index,
-                tipo,
-                last_key
-            ] = line.split(',')
+        params = parametros.keys()
+        for campo in self.campos:
+            fcampo = open(f'./db/{self.nombre}_table/{campo}.fd', 'a')
+            if campo not in params:  # es nulo
+                fcampo.write(f'{id},[NULL]\n')
+            else:  # significa que lo pasaron
+                val = parametros[campo]
+                fcampo.write(f'{id},{val}\n')
+            fcampo.close()
+        pass
 
-            if campo_index == campo:
-                return {
-                    'id': int(last_key),
-                    'campo': campo_index,
-                    'tipo': tipo,
-                    'pos': pos
-                }
-        index.close()
-        return None
+    pass

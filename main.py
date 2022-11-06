@@ -11,6 +11,12 @@ def insertPerson(cliente: Cliente):
         'deuda': 2_500
     })
 
+    cliente.insert({
+      'nombre': 'Marcos',
+      'deuda': 3_000,
+      'credito': 3_500
+    })
+
 
 def main():
     cliente = Cliente()
