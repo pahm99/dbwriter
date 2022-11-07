@@ -4,7 +4,7 @@ from pick import pick
 from rich.console import Console
 from rich.table import Table
 from itertools import zip_longest
-from rich.prompt import Prompt,FloatPrompt,IntPrompt
+from rich.prompt import Prompt, FloatPrompt, IntPrompt
 
 
 class Data:
