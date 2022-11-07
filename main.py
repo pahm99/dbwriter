@@ -17,6 +17,7 @@ def main():
     info.append('- select: para traer datos de la tabla\n')
     info.append('- insert: pide los datos a ingresar\n')
     info.append('- find: ecnontrar un registro y poder editar o eliminarlo\n')
+    info.append('- exit: para salir del programa\n')
     pad = Padding(info, 1)
     console.print(pad)
     while True:

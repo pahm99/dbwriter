@@ -20,6 +20,9 @@ class Data:
     def initDB(self):
         # corroboramos si existe nuestra directorio
 
+        if not path.exists('./db'):
+            mkdir('./db')
+
         if not path.exists(f'./db/{self.nombre}_table'):
             mkdir(f'./db/{self.nombre}_table')
             pass
