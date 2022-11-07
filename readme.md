@@ -11,3 +11,12 @@ las tablas de se compones por
 - posicion
 - nombre del campo
 - ultimo indice ocupado (id)
+
+## instrucciones para ejecutar el proyecto
+Proyecto interamente escrito en python3, por lo tnato se require el mismo interprete
+instalado, se hace uso de venv, para el desarrollo de ejecucion del paquete, pero puede
+instalar los paquetes globalmente, se require de las siguientes dependencias
+```shell
+pip install rich
+pip install pick
+```

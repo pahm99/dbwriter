@@ -58,7 +58,7 @@ class Data:
         pass
 
     def __pedir_columnas(self):
-        title = 'Favor de seleccionar las columnas a proyectar (espacio para seleccionar, enter para continuar)'
+        title = 'Favor de seleccionar las columnas (espacio para seleccionar, enter para continuar)'
         campos = list(self.campos.keys())
         selected = pick(campos, title, multiselect=True, min_selection_count=1)
         selected_flat = []
@@ -69,7 +69,6 @@ class Data:
     def select(self):
         what_select = pick(['todo', 'seleccionar campos'], '¿Que deseas seleccionar?')
         selected = None
-        print(what_select)
         if what_select[0] == 'todo':
             selected = list(self.campos.keys())
         else:
