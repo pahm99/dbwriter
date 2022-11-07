@@ -6,7 +6,7 @@ from rich.console import Console
 from rich.table import Table
 from itertools import zip_longest
 from rich.prompt import Prompt, FloatPrompt, IntPrompt
-
+import re
 
 class Data:
     campos = {}
@@ -268,24 +268,47 @@ class Data:
         len = IntPrompt.ask('¿Cuantos nuevos registros van a hacer?', default=1)
         console = Console()
         table = Table('ID', *cols, title='Registros realizados')
+        reg_invalid = False
         for i in range(0, len):
             fill = {}
+            val = None
             for col in cols:
-                val = None
                 selfcol = self.campos[col]
                 reg = f'{i + 1} => {col}'
                 match selfcol['type'].value:
-                    case 'string' | 'date':
+                    case 'string':
                         val = Prompt.ask(reg)
                     case 'number':
                         val = FloatPrompt.ask(reg)
+                    case 'date':
+                        #validamos que sea una fecha valida, de lo contrario regresamos NULL
+                        val = Prompt.ask(reg)
+                        if not re.search('([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))',val):
+                            print('Formato invalido para Date, favor de ingresar un formato valido yyy-mm-dd, No fue posible registrar')
+                            reg_invalid = True
                     case other:
                         val = '[NULL]'
 
-                # TODO si el valor no es correcto, saltamos este regitro
+
+                for rule in self.campos[col]['rules']:
+                    if not rule.validar(val):
+                        print('\n')
+                        print(rule.mensaje())
+                        print('\n')
+                        reg_invalid = True
+                        break
+
+                if reg_invalid:
+                    break
+
 
                 val = str(val)
                 fill[col] = val
+                pass
+
+            if reg_invalid:
+                reg_invalid = False
+                continue
             # caso contrario lo registramos
             id = self.auto_increment()
             params = fill.keys()

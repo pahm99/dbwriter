@@ -1,6 +1,6 @@
 from src.database.Data import Data
 from src.database.Types import Type
-
+from src.database.Validators.Mayor import Mayor
 
 class Cliente(Data):
     nombre = 'clientes'
@@ -24,10 +24,14 @@ class Cliente(Data):
         },
         'credito': {
             'type': Type.number,
-            'rules': []
+            'rules': [
+                Mayor()
+            ]
         },
         'deuda': {
             'type': Type.number,
-            'rules': []
+            'rules': [
+                Mayor()
+            ]
         }
     }
