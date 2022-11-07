@@ -1,6 +1,5 @@
 from src.database.Data import Data
 from src.database.Types import Type
-from src.database.Validators.Unique import Unique
 
 
 class Cliente(Data):

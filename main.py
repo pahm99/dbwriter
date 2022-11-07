@@ -1,27 +1,35 @@
 from src.models.Cliente import Cliente
+from rich.console import Console
+from rich.text import Text
+from rich.padding import Padding
 
+cliente = Cliente()
+cliente.initDB()
 
-def insertPerson(cliente: Cliente):
-    cliente.insert({
-        'nombre': 'Pedro Alonso',
-        'ap_paterno': 'Herrera',
-        'ap_materno': 'Mauricio',
-        'fecha_alta': '03-05-2020',
-        'credito': 5_000,
-        'deuda': 2_500
-    })
-
-    cliente.insert({
-      'nombre': 'Marcos',
-      'deuda': 3_000,
-      'credito': 3_500
-    })
 
 
 def main():
-    cliente = Cliente()
-    cliente.initDB()
-    insertPerson(cliente)
+    command = None
+
+    console = Console()
+    info = Text('Gestor de datos local\n')
+    info.append('comandos:\n')
+    info.append('- select: para traer datos de la tabla\n')
+    info.append('- insert: pide los datos a ingresar')
+    pad = Padding(info, 1)
+    console.print(pad)
+    while True:
+        command = input('>> ').strip()
+        match command:
+            case 'select':
+                cliente.select()
+            case 'insert':
+                cliente.insert()
+            case 'exit':
+                print('Adios :D')
+                break
+            case other:
+                print('Comando no valido')
 
     pass
 
